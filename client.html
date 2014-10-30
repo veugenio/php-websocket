@@ -1,0 +1,61 @@
+<!DOCTYPE HTML>
+<html lang="en-US">
+<head>
+	<meta charset="UTF-8">
+	<title>Teste Socket</title>
+</head>
+<body>
+
+	<div class="display">
+		
+	</div>
+	<form class="form">
+		<input type="text" class="input"> <input type="button" class="btn-send" value="enviar">
+	</form>
+
+	<script type="text/javascript" src="js/jquery-2.1.1.min.js"></script>
+	<script type="text/javascript">
+		var socket;
+		function checkConnection() {
+			console.log(socket);
+			if (socket===undefined || socket.readyState === 3) {
+				socket = new WebSocket('ws://127.0.0.1:8080/server.php');
+				socket.onopen = function() {
+					console.log('Status: ' + socket.readyState);
+					// socket.close();
+				}
+				socket.onmessage = function(m) {
+					console.log(m);
+					$('.display').append('<p>' + m.data + '</p>');
+				}
+				socket.onclose = function() {};
+				socket.onerror = function() {};
+			}
+		}
+		function sendMessage(message) {
+			checkConnection();
+			socket.send(message);
+		}
+		
+		$(function(){
+			checkConnection();
+			$('.btn-send').click(function(){
+				sendMessageEvent();
+				return false;
+			});
+			$('.form').submit(function(){
+				sendMessageEvent();
+				return false;
+			});
+
+			var sendMessageEvent = function() {
+				sendMessage($('.input').val());
+				$('.input').val('');
+			}
+
+		});		
+		
+		
+	</script>
+</body>
+</html>
